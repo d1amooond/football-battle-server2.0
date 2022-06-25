@@ -19,5 +19,8 @@ namespace DataAccess.Repository
 
         public IUserRepo User => user ??= new UserRepo(db);
         private IUserRepo user;
+
+        public ILanguageRepo Language => language ??= new LanguageRepo(db);
+        private ILanguageRepo language;
     }
 }

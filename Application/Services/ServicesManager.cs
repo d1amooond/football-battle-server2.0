@@ -12,6 +12,12 @@ namespace Application.Services
         public UserService User => user ??= new UserService(app);
         private UserService user;
 
+        public RoleService Role => role ??= new RoleService(app);
+        private RoleService role;
+
+        public LanguageService Language => language ??= new LanguageService(app);
+        private LanguageService language;
+
         private Context app;
     }
 }

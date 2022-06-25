@@ -10,5 +10,7 @@ namespace DataAccess.Repository
         IQuestionRepo Question { get; }
 
         IUserRepo User { get; }
+
+        ILanguageRepo Language { get; }
     }
 }

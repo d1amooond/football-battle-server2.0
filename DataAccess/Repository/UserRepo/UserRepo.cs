@@ -10,13 +10,13 @@ using Utils.Extensions;
 
 namespace DataAccess.Repository
 {
-    public class UserRepo : IUserRepo
+    public class UserRepo : BaseRepo, IUserRepo
     {
         private readonly IFootballDBContext db;
 
-        private readonly string collectionType = "users";
+        private static readonly string collectionType = "users";
 
-        public UserRepo(IFootballDBContext db)
+        public UserRepo(IFootballDBContext db) : base(db, collectionType)
         {
             this.db = db;
         }
@@ -47,6 +47,14 @@ namespace DataAccess.Repository
             return refreshToken.FirstOrDefault();
         }
 
+        public async Task<RefreshToken> GetRefreshToken(string token)
+        {
+            var tokenCollection = db.GetCollection<RefreshToken>("refresh_tokens");
+
+            var refreshToken = await tokenCollection.FindAsync<RefreshToken>(t => t.Token == token && t.Revoked == null && t.ExpiresAt > DateTime.UtcNow);
+            return refreshToken.FirstOrDefault();
+        }
+
         public async Task<User> GetUserById(Guid id)
         {
             var userCollection = db.GetCollection<User>(collectionType);
@@ -65,6 +73,20 @@ namespace DataAccess.Repository
             var userCollection = db.GetCollection<User>(collectionType);
             await userCollection.InsertOneAsync(user);
             return user;
+        }
+
+        public async Task<Role> GetRoleByUserId(ObjectId userId)
+        {
+            var roleCollection = db.GetCollection<Role>("roles");
+            var roles = await roleCollection.FindAsync((r) => r.UserId == userId);
+            return roles.FirstOrDefault();
+        }
+
+        public async Task<Profile> GetProfileByUserId(ObjectId userId)
+        {
+            var profileCollection = db.GetCollection<Profile>("profiles");
+            var profiles = await profileCollection.FindAsync(p => p.UserId == userId);
+            return profiles.FirstOrDefault();
         }
     }
 }

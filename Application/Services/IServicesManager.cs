@@ -5,5 +5,9 @@ namespace Application.Services
     {
         QuestionService Question { get; }
         UserService User { get; }
+
+        RoleService Role { get; }
+
+        LanguageService Language { get; }
     }
 }

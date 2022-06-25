@@ -127,26 +127,24 @@ namespace Application.Services.Question
                 throw new SecurityTokenException("Invalid token");
             return principal;
         }
-        async public Task<Response<TokensDTO>> RefreshTokens(string token)
+        async public Task<Response<TokensDTO>> RefreshTokens(string refreshToken)
         {
             var response = new Response<TokensDTO>();
             try
             {
-                var principal = GetPrincipalFromExpiredToken(token);
+                var token = await this.app.Repository.User.GetRefreshToken(refreshToken);
 
-                var refresh = await this.app.Repository.User.GetRefreshTokenByUsername(principal.Identity.Name);
-                
-                if (refresh == null)
+                if (token == default)
                 {
-                    return response.Failure("Cannot find refresh token for access");
+                    return response.Failure("Incorrect refresh token");
                 }
 
-                var accessToken = this.GenerateAccessToken(principal.Identity.Name);
-                var refreshToken = this.GenerateRefreshToken();
+                var newAccessToken = this.GenerateAccessToken(token.Username);
+                var newRefreshToken = this.GenerateRefreshToken();
 
                 var refreshTokenEntity = new RefreshToken
                 {
-                    Username = principal.Identity.Name,
+                    Username = token.Username,
                     Token = refreshToken,
                     ExpiresAt = DateTime.UtcNow.AddDays(1)
                 };
@@ -155,13 +153,13 @@ namespace Application.Services.Question
 
 
                 // revoke token
-                refresh.Revoked = DateTime.UtcNow;
-                await this.app.Repository.User.RevokeRefreshToken(refresh);
+                token.Revoked = DateTime.UtcNow;
+                await this.app.Repository.User.RevokeRefreshToken(token);
 
                 var tokens = new TokensDTO
                 {
-                    AccessToken = accessToken,
-                    RefreshToken = refreshToken,
+                    AccessToken = newAccessToken,
+                    RefreshToken = newRefreshToken,
                     ExpiresAt = DateTime.UtcNow.AddMinutes(60)
                 };
 
@@ -174,9 +172,56 @@ namespace Application.Services.Question
             return response;
         } 
 
-        async public Task<Response<UserDTO>> RegisterUser(RegisterUserRequest request)
+        public async Task<Response<UserDTO>> GetUserContext(string token)
         {
             var response = new Response<UserDTO>();
+            try
+            {
+                var principal = GetPrincipalFromExpiredToken(token);
+                
+                if (principal == null)
+                {
+                    response.Failure("There are no principal with this token");
+                }
+
+                var user = await this.app.Repository.User.GetUserByUsername(principal.Identity.Name);
+
+                if (user == null)
+                {
+                    return response.Failure("There are not user with such username");
+                }
+
+                var role = await this.app.Repository.User.GetRoleByUserId(user.Id);
+
+                if (role == null)
+                {
+                    return response .Failure("Cannot find role for user");
+                }
+
+                var profile = await this.app.Repository.User.GetProfileByUserId(user.Id);
+
+                if (profile == null)
+                {
+                    return response.Failure("Cannot find profile for user");
+                }
+
+                var userDTO = user.ToDTO();
+                userDTO.Profile = profile.ToDTO();
+                userDTO.Role = role.ToDTO();
+
+                return response.Success(userDTO);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return response;
+        }
+
+        async public Task<Response<Guid>> RegisterUser(RegisterUserRequest request)
+        {
+            var response = new Response<Guid>();
 
             try
             {
@@ -190,11 +235,6 @@ namespace Application.Services.Question
                     return response.Failure("Password should have at least 8 symbols");
                 }
 
-                if (string.IsNullOrWhiteSpace(request.Country))
-                {
-                    return response.Failure("Country is required");
-                }
-
                 var user = new User
                 {
                     Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
@@ -202,7 +242,25 @@ namespace Application.Services.Question
                 };
 
                 var createdUser = await this.app.Repository.User.CreateUser(user);
-                return response.Success(createdUser.ToDTO());
+
+                // create role
+                var role = new Role
+                {
+                    UserId = createdUser.Id,
+                    Type = Roles.User,
+                };
+
+                var createdRole = await this.app.Repository.User.InsertInto<Role>(role, "roles");
+
+                // create profile
+                var profile = new Profile
+                {
+                    UserId = user.Id,
+                };
+
+                await this.app.Repository.User.InsertInto<Profile>(profile, "profiles");
+
+                return response.Success(createdUser.Id.AsGuid());
             }
             catch (Exception ex)
             {

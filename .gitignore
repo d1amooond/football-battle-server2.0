@@ -1,20 +1,30 @@
 .vs
 Application/.vs
+Application/.config
+Application/Properties
 Application/bin
 Application/obj
 
 DataAccess/.vs
+DataAccess/.config
+DataAccess/Properties
 DataAccess/bin
 DataAccess/obj
 
 Domain/.vs
+Domain/.config
+Domain/Properties
 Domain/bin
 Domain/obj
 
 Football.Battle/.vs
+Football.Battle/.config
+Football.Battle/Properties
 Football.Battle/bin
 Football.Battle/obj
 
 Utils/.vs
+Utils/.config
+Utils/Properties
 Utils/bin
 Utils/obj

@@ -8,11 +8,8 @@ namespace Application.Dtos
 {
     public class UserDTO
     {
-        public string Email { get; set; }
         public string Username { get; set; }
-        public Roles Role { get; set; }
-        public int Coins { get; set; }
-        public int Rating { get; set; }
-        public string Country { get; set; }
+        public RoleDTO Role { get; set; }
+        public ProfileDTO Profile { get; set; }
     }
 }
