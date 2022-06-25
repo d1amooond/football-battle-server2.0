@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repository
 {
-    public interface ILanguageRepo : IBaseRepo
+    public interface ICategoryRepo : IBaseRepo
     {
-        Task<List<Language>> GetLanguages();
 
-        Task<Language> GetByShortCode(string shortCode);
     }
 }

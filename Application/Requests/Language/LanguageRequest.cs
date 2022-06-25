@@ -10,6 +10,7 @@ namespace Application.Requests
     {
         public string Name { get; set; }
         public string DisplayName { get; set; }
+        public string ShortCode { get; set; }
     }
 
     public class UpdateLanguageRequest : CreateLanguageRequest

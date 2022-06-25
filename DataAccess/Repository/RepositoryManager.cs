@@ -22,5 +22,8 @@ namespace DataAccess.Repository
 
         public ILanguageRepo Language => language ??= new LanguageRepo(db);
         private ILanguageRepo language;
+
+        public ICategoryRepo Category => category ??= new CategoryRepo(db);
+        private ICategoryRepo category;
     }
 }

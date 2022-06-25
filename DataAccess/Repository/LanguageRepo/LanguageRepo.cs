@@ -26,5 +26,10 @@ namespace DataAccess.Repository
             return languages.Find(new BsonDocument()).ToListAsync();
         }
 
+        public Task<Language> GetByShortCode(string shortCode)
+        {
+            var languages = db.GetCollection<Language>(collectionType);
+            return languages.Find(language => language.ShortCode == shortCode).FirstOrDefaultAsync();
+        }
     }
 }

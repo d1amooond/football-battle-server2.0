@@ -13,5 +13,6 @@ namespace DataAccess.Repository
         Task<T> GetById<T>(ObjectId id, string collectionType = null);
         Task<T> InsertInto<T>(T entity, string collectionType = null);
         Task DeleteById(ObjectId id, string collectionType = null);
+        Task<List<T>> GetAll<T>(string collectionType = null);
     }
 }

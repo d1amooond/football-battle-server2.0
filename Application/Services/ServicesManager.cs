@@ -18,6 +18,9 @@ namespace Application.Services
         public LanguageService Language => language ??= new LanguageService(app);
         private LanguageService language;
 
+        public CategoryService Category => category ??= new CategoryService(app);
+        private CategoryService category;
+
         private Context app;
     }
 }

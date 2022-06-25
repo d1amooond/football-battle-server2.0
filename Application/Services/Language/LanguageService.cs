@@ -1,5 +1,5 @@
 ﻿using Application.Dtos;
-using Application.Extensions.Language;
+using Application.Extensions;
 using Application.General;
 using Application.Requests;
 using Domain.Entities;
@@ -38,21 +38,35 @@ namespace Application.Services
                     return response.Failure("Display Name is required");
                 }
 
+                if (string.IsNullOrEmpty(request.ShortCode))
+                {
+                    return response.Failure("Short code is required");
+                }
+
                 var hasPermissions = await this.app.Services.Role.HasPermissions(roleId, (int)acceptedRoles);
                 if (!hasPermissions)
                 {
                     return response.AccessDenied("Access Denied");
                 }
 
+
+                var language = await this.app.Repository.Language.GetByShortCode(request.ShortCode);
+                if (language != null)
+                {
+                    return response.Failure("Language with current short code already exists");
+                }
+
+
                 var entity = new Language
                 {
                     Name = request.Name,
                     Status = LanguageStatuses.Draft,
+                    ShortCode = request.ShortCode
                 };
 
-                var language = await this.app.Repository.Language.InsertInto<Language>(entity, "languages");
+                var createdLanguage = await this.app.Repository.Language.InsertInto<Language>(entity, "languages");
 
-                return response.Success(entity.Id.AsGuid());
+                return response.Success(createdLanguage.Id.AsGuid());
 
             }
             catch (Exception ex)
@@ -70,6 +84,21 @@ namespace Application.Services
 
             try
             {
+                if (string.IsNullOrEmpty(request.Name))
+                {
+                    return response.Failure("Name is required");
+                }
+
+                if (string.IsNullOrEmpty(request.DisplayName))
+                {
+                    return response.Failure("Display Name is required");
+                }
+
+                if (string.IsNullOrEmpty(request.ShortCode))
+                {
+                    return response.Failure("Short code is required");
+                }
+
                 var hasPermissions = await this.app.Services.Role.HasPermissions(roleId, (int)acceptedRoles);
                 if (!hasPermissions)
                 {

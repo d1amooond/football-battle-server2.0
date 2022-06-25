@@ -31,6 +31,7 @@ namespace DataAccess.Repository
         public async Task<T> Update<T>(BaseEntity entity, string collectionType = null)
         {
             var collection = this.db.GetCollection<T>(collectionType ?? this.collectionType);
+            entity.Updated = DateTime.UtcNow;
             await collection.UpdateOneAsync(Builders<T>.Filter.Eq("_id", entity.Id), new ObjectUpdateDefinition<T>(entity));
 
             var entities = await collection.FindAsync<T>(Builders<T>.Filter.Eq("_id", entity.Id));
@@ -48,6 +49,12 @@ namespace DataAccess.Repository
         {
             var collection = this.db.GetCollection<BaseEntity>(collectionType ?? this.collectionType);
             await collection.DeleteOneAsync<BaseEntity>(entity => entity.Id == id);
+        }
+
+        public Task<List<T>> GetAll<T>(string collectionType = null)
+        {
+            var collection = this.db.GetCollection<T>(collectionType ?? this.collectionType);
+            return collection.Find(new BsonDocument()).ToListAsync();
         }
     }
 }

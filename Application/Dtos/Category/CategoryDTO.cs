@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos
 {
-    public class LanguageDTO
+    public class CategoryDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string ShortCode { get; set; }
-        public string DisplayName { get; set; }
-        public LanguageStatuses Status { get; set; }
+        public List<CategoryDisplayName> DisplayNames { get; set; }
+        public CategoryStatuses Status { get; set; }
     }
 }

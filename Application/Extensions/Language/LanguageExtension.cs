@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Utils.Extensions;
 
-namespace Application.Extensions.Language
+namespace Application.Extensions
 {
     public static class LanguageExtension
     {

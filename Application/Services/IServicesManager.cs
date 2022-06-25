@@ -9,5 +9,7 @@ namespace Application.Services
         RoleService Role { get; }
 
         LanguageService Language { get; }
+
+        CategoryService Category { get; }
     }
 }

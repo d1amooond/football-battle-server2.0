@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Language : BaseEntity
+    public class Category : BaseEntity
     {
-        public string DisplayName { get; set; }
         public string Name { get; set; }
-        public string ShortCode { get; set; }
-        public LanguageStatuses Status { get; set; }
+        public List<CategoryDisplayName> DisplayNames { get; set; }
+        public CategoryStatuses Status { get; set; }
     }
 }

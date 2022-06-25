@@ -12,5 +12,7 @@ namespace DataAccess.Repository
         IUserRepo User { get; }
 
         ILanguageRepo Language { get; }
+
+        ICategoryRepo Category { get; }
     }
 }
