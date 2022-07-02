@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Domain.Entities
 {
-    public class Response : ActionResult, IActionResult
+    public class Response
     {
         public int Code { get; set; } = 0;
         public int Type { get; set; } = 0;
@@ -32,13 +32,16 @@ namespace Domain.Entities
             this.Type = type;
         }
 
-        public override Task ExecuteResultAsync(ActionContext context)
+        public Task ExecuteResultAsync(ActionContext context)
         {
-            if (this.StatusCode.HasValue)
+            var objectResult = new ObjectResult(this)
             {
-                context.HttpContext.Response.StatusCode = this.StatusCode.Value;
-            }
-            return base.ExecuteResultAsync(context);
+                StatusCode = this.StatusCode.HasValue ? this.StatusCode.Value : 200,
+                DeclaredType = typeof(Response),
+                Value = this
+            };
+
+           return objectResult.ExecuteResultAsync(context);
         }
 
         public void SetStatusCode(int code)
