@@ -44,21 +44,21 @@ namespace Football.Battle.Server.Controllers
         }
 
         [HttpGet("Category/{id}")]
-        public Task<Response<LanguageDTO>> GetLanguage([FromRoute] Guid languageId, [FromHeader(Name = "RoleId")] Guid? roleId)
+        public Task<Response<CategoryDTO>> GetLanguage([FromRoute] Guid id, [FromHeader(Name = "RoleId")] Guid? roleId)
         {
-            return this.app.Services.Language.GetLanguage(languageId, roleId);
+            return this.app.Services.Category.GetCategory(id, roleId);
         }
 
         [HttpGet("Categories")]
-        public Task<Response<List<LanguageDTO>>> GetLanguages([FromHeader(Name = "RoleId")] Guid? roleId)
+        public Task<Response<List<CategoryDTO>>> GetLanguages([FromHeader(Name = "RoleId")] Guid? roleId)
         {
-            return this.app.Services.Language.GetLanguages(roleId);
+            return this.app.Services.Category.GetCategories(roleId);
         }
 
         [HttpDelete("Category/{id}")]
-        public Task<Response> DeleteLanguage([FromRoute] Guid languageId, [FromHeader(Name = "RoleId")] Guid? roleId)
+        public Task<Response> DeleteLanguage([FromRoute] Guid id, [FromHeader(Name = "RoleId")] Guid? roleId)
         {
-            return this.app.Services.Language.DeleteLanguage(languageId, roleId);
+            return this.app.Services.Category.DeleteCategory(id, roleId);
         }
     }
 }

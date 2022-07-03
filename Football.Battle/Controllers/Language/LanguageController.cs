@@ -38,9 +38,9 @@ namespace Football.Battle.Server.Controllers
         }
 
         [HttpGet("Language/{id}")]
-        public Task<Response<LanguageDTO>> GetLanguage([FromRoute] Guid languageId, [FromHeader(Name = "RoleId")] Guid? roleId)
+        public Task<Response<LanguageDTO>> GetLanguage([FromRoute] Guid id, [FromHeader(Name = "RoleId")] Guid? roleId)
         {
-            return this.app.Services.Language.GetLanguage(languageId, roleId);
+            return this.app.Services.Language.GetLanguage(id, roleId);
         }
 
         [HttpGet("Languages")]
